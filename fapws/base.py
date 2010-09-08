@@ -21,8 +21,8 @@ try:
 except ImportError:
     import StringIO
 import traceback, sys, string
-
-
+from wsgiref.handlers import format_date_time
+from time import mktime
 
 import config
 
@@ -108,7 +108,7 @@ class Start_response:
         # NEW -- sent records whether or not the headers have been send to the
         # client
         self.sent= False
-        self.response_headers['Date'] = datetime.datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        self.response_headers['Date'] = format_date_time(mktime(datetime.now().timetuple()))
         self.response_headers['Server'] = config.SERVER_IDENT
 
     def __call__(self, status, response_headers, exc_info=None):
@@ -134,7 +134,7 @@ class Start_response:
             if isinstance(expires, str):
                 self.cookies[key]['expires'] = expires
             elif isinstance(expires, datetime.datetime):
-                expires = expires.strftime('%a, %d %b %Y %H:%M:%S GMT')
+                expires = format_date_time(mktime(expires.timetuple()))
             else:
                 raise CookieError, 'expires must be a datetime object or a string'
             self.cookies[key]['expires'] = expires

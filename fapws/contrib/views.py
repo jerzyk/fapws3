@@ -42,7 +42,7 @@ class Staticfile:
             #print "NEW", environ['fapws.uri']
             ftype=mimetypes.guess_type(fpath)[0]
             headers.append(('Content-Type',ftype))
-            headers.append(('Last-Modified',fmtime))
+            headers.append(('Last-Modified',format_date_time(fmtime)))
             headers.append(('Content-Length',os.path.getsize(fpath)))
             start_response('200 OK', headers)
             return f

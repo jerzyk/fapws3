@@ -15,6 +15,8 @@
 import mimetypes
 import os.path
 import time
+from wsgiref.handlers import format_date_time
+
 
 class Staticfile:
     """ Generic class that you can use to dispatch static files

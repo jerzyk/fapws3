@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import datetime
+from datetime import datetime
 from Cookie import SimpleCookie, CookieError
 try:
     import cStringIO as StringIO
@@ -133,7 +133,7 @@ class Start_response:
         if expires:
             if isinstance(expires, str):
                 self.cookies[key]['expires'] = expires
-            elif isinstance(expires, datetime.datetime):
+            elif isinstance(expires, datetime):
                 expires = format_date_time(mktime(expires.timetuple()))
             else:
                 raise CookieError, 'expires must be a datetime object or a string'

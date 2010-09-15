@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages, Extension
 import os
 import sys
@@ -80,7 +81,7 @@ library_dirs.append(res)
 
 
 setup(name='fapws3',
-      version="0.7",
+      version="0.8",
       description="Fast Asynchronous Python Web Server",
       long_description=readme,
 classifiers=['Development Status :: 4 - Beta','Environment :: Web Environment','License :: OSI Approved :: GNU General Public License (GPL)','Programming Language :: C','Programming Language :: Python','Topic :: Internet :: WWW/HTTP :: HTTP Servers','Topic :: Internet :: WWW/HTTP :: WSGI :: Server'], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -101,7 +102,7 @@ classifiers=['Development Status :: 4 - Beta','Environment :: Web Environment','
       packages= find_packages(),
       ext_modules = [
           Extension('fapws._evwsgi',
-                  sources=['fapws/_evwsgi.c'],
+                  sources=['fapws/extra.c', 'fapws/wsgi.c','fapws/mainloop.c','fapws/_evwsgi.c'],
                   include_dirs=include_dirs,
                   library_dirs=library_dirs, # add LD_RUN_PATH in your environment
                   libraries=['ev'],

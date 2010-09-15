@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from datetime import datetime
+import datetime
 from Cookie import SimpleCookie, CookieError
 try:
     import cStringIO as StringIO
@@ -88,7 +88,6 @@ class Environ(dict):
         self['wsgi.multithread'] = False
         self['wsgi.multiprocess'] = True
         self['wsgi.run_once'] = False
-        self['wsgi.url_scheme']="http" 
         self['fapws.params']={}
     #here after some entry point before the Environ update
     def update_headers(self, data):
@@ -104,12 +103,10 @@ class Start_response:
         self.status_reasons = "OK"
         self.response_headers = {}
         self.exc_info = None
-        self.cookies = SimpleCookie()
+        self.cookies = None 
         # NEW -- sent records whether or not the headers have been send to the
         # client
         self.sent= False
-        self.response_headers['Date'] = format_date_time(mktime(datetime.now().timetuple()))
-        self.response_headers['Server'] = config.SERVER_IDENT
 
     def __call__(self, status, response_headers, exc_info=None):
         self.status_code, self.status_reasons = status.split(" ",1)
@@ -126,6 +123,8 @@ class Start_response:
         val=str(val)
         self.response_headers[key]=val
     def set_cookie(self, key, value='', max_age=None, expires=None, path='/', domain=None, secure=None):
+        if not self.cookies:
+            self.cookies=SimpleCookie()
         self.cookies[key] = value
         self.response_headers['Set-Cookie'] = self.cookies
         if max_age:
@@ -133,7 +132,7 @@ class Start_response:
         if expires:
             if isinstance(expires, str):
                 self.cookies[key]['expires'] = expires
-            elif isinstance(expires, datetime):
+            elif isinstance(expires, datetime.datetime):
                 expires = format_date_time(mktime(expires.timetuple()))
             else:
                 raise CookieError, 'expires must be a datetime object or a string'
@@ -149,14 +148,13 @@ class Start_response:
             self.cookies[key] = ''
         self.cookies[key]['max-age'] = "0"
     def __str__(self):
-        res = "HTTP/1.1 %s %s\r\n" % (self.status_code, self.status_reasons)
+        res = "HTTP/1.0 %s %s\r\n" % (self.status_code, self.status_reasons)
         for key, val in self.response_headers.items():
-            if key.upper() != "SET-COOKIE":
-                res += '%s: %s\r\n' % (key,val)
+            res += '%s: %s\r\n' % (key,val)
         if self.cookies:
             res+=str(self.cookies)+"\r\n"
         res += "\r\n"
-        return str(res)
+        return res
         
 def redirectStdErr():
     """
